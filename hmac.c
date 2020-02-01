@@ -29,7 +29,7 @@ EVP_PKEY* load_private_key(const char* file);
 
 void handleErrors(void);
 
-int main(int arc, char* argv[]) { 
+int main(int arc, char* argv[]) {
   ERR_load_crypto_strings();
   OpenSSL_add_all_algorithms();
   OPENSSL_no_config();
@@ -41,7 +41,7 @@ int main(int arc, char* argv[]) {
   char* val = (char *) "val";
   size_t val_len = strlen ((char*)val);
 
-  int result = hmac(msg, msg_len, &val, &val_len, pkey); 
+  int result = hmac(msg, msg_len, &val, &val_len, pkey);
   printf("result %d\n", result);
 
   EVP_cleanup();
@@ -69,7 +69,7 @@ int hmac(const char* msg, size_t m_len, char** val, size_t* val_len, EVP_PKEY* p
     handleErrors();
   }
 
-  // 
+  //
   rc = EVP_DigestSignInit(mdctx, NULL, md, NULL, pkey);
   return -1;
 

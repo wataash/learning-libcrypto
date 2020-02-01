@@ -6,7 +6,7 @@
 
 void handleErrors(void);
 
-int main(int arc, char *argv[]) { 
+int main(int arc, char *argv[]) {
   /* Load the human readable error strings for libcrypto */
   ERR_load_crypto_strings();
 

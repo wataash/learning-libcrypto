@@ -3,7 +3,7 @@ OPENSSL_INCLUDE_DIR=$(OPENSSL_DIR)/include
 OPENSSL_LIB_DIR=$(OPENSSL_DIR)/lib
 
 basic: basic.c
-	clang -O0 -g -I$(OPENSSL_INCLUDE_DIR) $< -o $@ -L$(OPENSSL_LIB_DIR) -lcrypto 
+	clang -O0 -g -I$(OPENSSL_INCLUDE_DIR) $< -o $@ -L$(OPENSSL_LIB_DIR) -lcrypto
 
 ssl_method: ssl_method.c
 	clang -O0 -g -I$(OPENSSL_INCLUDE_DIR) $< -o $@ -L$(OPENSSL_LIB_DIR) -lssl -lcrypto
@@ -48,7 +48,7 @@ distribution: distribution.cc
 generator: generator.cc
 	clang++ -std=c++14 -O0 -g -I$(OPENSSL_INCLUDE_DIR) $< -o $@ -L$(OPENSSL_LIB_DIR) -lssl -lcrypto
 
-.PHONY: clean 
+.PHONY: clean
 
-clean: 
+clean:
 	@rm -f basic socket ssl engine hmac digest sign private random_bytes ssl_method derive

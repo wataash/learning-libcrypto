@@ -13,7 +13,7 @@ and also takes up space on my system. With the followig I can simply make:
 To configure and install to a build directory:
 
     $ ./Configure --debug --prefix=/Users/danielbevenius/work/security/build_master darwin64-x86_64-cc
-    $ make 
+    $ make
 
 Optionally install:
 
@@ -53,7 +53,7 @@ Listing tests:
 
 ### Debugging
 
-    $ lldb basic 
+    $ lldb basic
     (lldb) breakpoint set  -f basic.c -l 21
 
 ### ctags
@@ -102,7 +102,7 @@ Let's take a closer look at that last call. It will end up in ssl_lib.c:
 
 Which will delegate to x509_d2.c:
 
-    int X509_STORE_load_locations(X509_STORE *ctx, 
+    int X509_STORE_load_locations(X509_STORE *ctx,
                                   const char *file,
                                   const char *path) {
 
@@ -125,10 +125,10 @@ In our case this call will end up in x509_d2.c:
         lookup = X509_STORE_add_lookup(ctx, X509_LOOKUP_file());
 
 So what is a X509_LOOKUP?
-This is a struct used to store the lookup method, it has state to see if it has been 
+This is a struct used to store the lookup method, it has state to see if it has been
 initialized, an owning X509_STORE.
 The actual look up is done in x509/x509_lu.c which takes a pointer to a X509_STORE and
-a X509_LOOKUP_METHOD. 
+a X509_LOOKUP_METHOD.
 
 Remember that I said I'm not using a X509_STORE, but apperently I am
 because the SSL_CTX will have a cert_store:
@@ -184,13 +184,13 @@ So the above will loop through all the certificates found in `TrustStore.pem` wh
   }
 
 Which we can verify that there are 13 in that file.
-Notice that we are adding them using X509_STORE_add_cert. So what does a cert look like 
-in code: 
+Notice that we are adding them using X509_STORE_add_cert. So what does a cert look like
+in code:
 
     X509_OBJECT *obj;
     obj = (X509_OBJECT *)OPENSSL_malloc(sizeof(X509_OBJECT));
- 
-Every X509_OBJECT has a reference count. 
+
+Every X509_OBJECT has a reference count.
 
 ### BIO
 A BIO is an I/O stream abstraction; essentially OpenSSL's answer to the C library's FILE *.
@@ -209,7 +209,7 @@ BIO is a typedef declared in `include/openssl/ossl_typ.h`:
 
     typedef struct bio_method_st BIO_METHOD;
 
-`bio_method_st' is defined in include/internal/bio.h: 
+`bio_method_st' is defined in include/internal/bio.h:
 
     struct bio_method_st {
       int type;
@@ -224,7 +224,7 @@ BIO is a typedef declared in `include/openssl/ossl_typ.h`:
       int (*create) (BIO *);
       int (*destroy) (BIO *);
       long (*callback_ctrl) (BIO *, int, bio_info_cb *);
-    };  
+    };
 
 Lets take a look at a concrete method struct, for example ssl/bio_ssl.c:
 
@@ -244,7 +244,7 @@ Lets take a look at a concrete method struct, for example ssl/bio_ssl.c:
 
 # define BIO_TYPE_SSL            ( 7|BIO_TYPE_FILTER)
 
-Now the docs for [BIO](https://wiki.openssl.org/index.php/BIO) say "BIOs come in two flavors: source/sink, or filter." The types can 
+Now the docs for [BIO](https://wiki.openssl.org/index.php/BIO) say "BIOs come in two flavors: source/sink, or filter." The types can
 be found in include/openssl/bio.h
 The rest are the name and functions that of this method type.
 
@@ -298,7 +298,7 @@ There is some error handling and then:
       lock = 0x0000000100615570
     }
 
-`next_bio` and `prev_bio` are used by filter BIOs.  
+`next_bio` and `prev_bio` are used by filter BIOs.
 `callback` is a function pointer that will be called for the following calls:
 
     # define BIO_CB_FREE     0x01
@@ -312,9 +312,9 @@ More details of callback can be found [here](https://www.openssl.org/docs/man1.1
 
 `ptr` might be a FILE* for example.
 
-When is `shutdown` used?   
+When is `shutdown` used?
 This is set to 1 by default in `crypto/bio/bio_lib.c`:
-  
+
     bio->shutdown = 1;
 
 One example is ssl/bio_ssl.c and it's `ssl_free` function:
@@ -358,7 +358,7 @@ Now, lets take a closer look at `BIO_write`.
 
 
 ### BIO_METHOD ctrl
-What is this used for?  
+What is this used for?
 As you might have guessed this if for performing control operations.
 
     long (*ctrl) (BIO *, int, long, void *);
@@ -376,7 +376,7 @@ The `cmd` operations available are specified in `include/openssl/bio.h`
 
 
 ### BIO_clear_retry_flags
-This is used to handle signals that might interrupt a system call. For example, if 
+This is used to handle signals that might interrupt a system call. For example, if
 OpenSSL is doing a read a signal might interrupt it.
 
 ### puts/write vs gets/read
@@ -388,7 +388,7 @@ A 0 or -1 return is not necessarily an indication of an error. In particular whe
 
 ### X509_up_ref
 What does this do?
-    
+
 
 ### Environment variables
 There are two environment variables that can be used (openssl/crypto/cryptlib.h):
@@ -407,19 +407,19 @@ When you do a X509_STORE_load_file and the method used is ctrl (by_file_ctrl)
      [ available ]
 
 
-### Message Digest 
+### Message Digest
 Is a cryptographic hash function which takes a string of any length as input and produces a fixed length hash value. A message digest is a fixed size numeric representation of the contents of a message
 An example of this can be found in digest.c
 
     md = EVP_get_digestbyname("SHA256");
 
-An EVP_MD abstracts the details of a specific hash function allowing code to 
-deal with the concept of a "hash function" without needing to know exactly 
+An EVP_MD abstracts the details of a specific hash function allowing code to
+deal with the concept of a "hash function" without needing to know exactly
 which hash function it is.
 The implementation of this can be found in openssl/crypto/evp/names.c:
 
     const EVP_MD *cp;
-    ... 
+    ...
     cp = (const EVP_MD *)OBJ_NAME_get(name, OBJ_NAME_TYPE_MD_METH);
     return (cp);
 
@@ -487,7 +487,7 @@ Next, lets take a look at:
 
     EVP_DigestInit_ex(mdctx, md, engine);
 
-We are passing in our pointer to the newly allocated EVP_MD_CTX struct, and a pointer to a 
+We are passing in our pointer to the newly allocated EVP_MD_CTX struct, and a pointer to a
 Message Digest EVP_MD.
 The impl can be found in `crypto/evp/digest.c':
 
@@ -517,7 +517,7 @@ So it calls reset on the EVP_MD_CTX_reset which in our case is not required as w
 
 Just to clarify this, `ctx` is a pointer to EVP_MD_CTX and `type` is a const pointer to EVP_MD.
 `update` of the EVP_MD_CTX is set to the EVP_MD's update so I guess either one can be used after this.
-`ctx->md_data` is allocated for the EVP_MD_CTX member `md_data` and the size used is the size for the type of EVP_MD being used. 
+`ctx->md_data` is allocated for the EVP_MD_CTX member `md_data` and the size used is the size for the type of EVP_MD being used.
 
      return ctx->digest->init(ctx);
 
@@ -589,7 +589,7 @@ Interesting is that this will call `EVP_DigestInit_ex` just like in our message 
     # define EVP_SignInit(a,b)               EVP_DigestInit(a,b)
     # define EVP_SignUpdate(a,b,c)           EVP_DigestUpdate(a,b,c)
 
-So we already know what `EVP_SignInit_ex` and `EVP_SignUpdate` do. 
+So we already know what `EVP_SignInit_ex` and `EVP_SignUpdate` do.
 But `EVP_SignFinal` is implemented in `crypto/evp/p_sign.c`:
 
     EVP_SignFinal(mdctx, sig, &sig_len, pkey);
@@ -656,7 +656,7 @@ Notice that the ref count is updated. There are then two getters:
     RSA *EVP_PKEY_get1_RSA(EVP_PKEY *pkey)
 
 Where `EVP_PKEY_get1_RSA` will call EVP_PKEY_get0_RSA and then increment the ref count. This is
-the only reason I can think of that these function have 1 and 0. 1 for functions that update the ref count and 0 for those that dont. 
+the only reason I can think of that these function have 1 and 0. 1 for functions that update the ref count and 0 for those that dont.
 "In accordance with the OpenSSL naming convention the key obtained from or assigned to the pkey using the 1 functions must be freed as well as pkey."
 
 
@@ -735,11 +735,11 @@ X.509 uses the Distiguished Encoding Rules (DER, which is a subset of Basic Enco
 using base64 encoding.
 
 #### Fields
-Version:  
+Version:
 0 = Version 1, 1 = Version 2, and 2 = Version 3
 Version 3 supports extensions
 
-Serial Number: 
+Serial Number:
 Originally used to uniquely identify a certificate issued by a given CA.
 
 Signature Algorithm:
@@ -763,13 +763,13 @@ For a self-signed cert the Subject and Issuer will match.
 
 
 #### Chains
-Just an end cerificate is not enough, instead each server must provide a chain of certificates that lead to a 
+Just an end cerificate is not enough, instead each server must provide a chain of certificates that lead to a
 trusted root certificate.
 
 
 ### SSL_get_peer_cert_chain
 SSL_get_peer_cert_chain() returns a pointer to STACK_OF(X509) certificates forming the certificate chain sent by the peer.
-If called on the client side, the stack also contains the peer's certificate; if called on the server side, the peer's 
+If called on the client side, the stack also contains the peer's certificate; if called on the server side, the peer's
 certificate must be obtained separately using SSL_get_peer_certificate.
 
     X509* cert = w->is_server() ? SSL_get_peer_certificate(w->ssl_) : nullptr;
@@ -814,11 +814,11 @@ Example (taken from [bio_ssl.c](./bio_ssl.c):
 
 Now, `SSLv23_client_method` is a macro which will expand to TLS_client_method()
 
-So what is a SSL_CTX?  
+So what is a SSL_CTX?
 This struct has a SSL_METHOD* as its first member. A stack of SSL_CIPHERs, a pointer
 to a x509_store_st cert_store.
 A cache (LHASH_OF(SSL_SESSION)* sesssion)) sessions? Callbacks for when a new session is
-added to the cache. 
+added to the cache.
 
 
 ### ssl_session_st
@@ -826,7 +826,7 @@ Represents an ssl session with information about the ssl_version the keys.
 
 
 ### BIO retry
-BIO_read will try to read a certain nr of bytes. This function will return the nr of 
+BIO_read will try to read a certain nr of bytes. This function will return the nr of
 bytes read, or 0, or -1.
 If the read operation is done on a blocking resource then 0 indicates that the resouces
 was closed (for example a socket), and -1 would indicate an error.
@@ -860,12 +860,12 @@ run the following command::
 
 ### Authenticated encryption with associated data (AEAD)
 You want to authenticate and transmit data in addition to an encrypted message.
-If a cipher processes a network packet composed of a header followed by a payload, you might choose to encrypt the 
-payload to hide the actual data transmitted, but not encrypt the header since it contains information required to 
-deliver the packet to its final recipient. At the same time, you might still like to authenticate the header’s 
+If a cipher processes a network packet composed of a header followed by a payload, you might choose to encrypt the
+payload to hide the actual data transmitted, but not encrypt the header since it contains information required to
+deliver the packet to its final recipient. At the same time, you might still like to authenticate the header’s
 data to make sure that it is received from the expected sender.
 ```
-       Encryption        Authentication   
+       Encryption        Authentication
       +--------------++---------------------------+
 mgs ->| Encrypted msg||Message Authentication Code|
       +--------------++---------------------------+
@@ -884,15 +884,15 @@ GCM
 EAX
 
 ### GCM (Galois Counter Mode)
-This algorithm produces both a cipher text and an authentication tag (think MAC). 
-Once the ciphertext and authentication tag have been generated, the sender transmits both to the 
+This algorithm produces both a cipher text and an authentication tag (think MAC).
+Once the ciphertext and authentication tag have been generated, the sender transmits both to the
 intended recipient.
 
 
 ### Additional Authentication Data (AAD)
 GCM, CCM allow for the input of additional data (header data in CCM) which will accompany the cipher text
 but does not have to be encrypted but must be authenticated.
-AE(K, P) = (C, T). The term AE stands for authenticated encryption, K is the key, P the plaintext and 
+AE(K, P) = (C, T). The term AE stands for authenticated encryption, K is the key, P the plaintext and
 C the cipher text, and finally T is the authentication tag.
 
 Authenticated cipher decryption is represented by AD(K, C, T) = P
@@ -935,7 +935,7 @@ use Config;
 ```
 I think this is the CPAN [Config](http://perldoc.perl.org/Config.html) module. It gives access to information that was available to the Configure program at Perl build time.
 
-Version information will be colleded into the Config object by parsing 
+Version information will be colleded into the Config object by parsing
 `include/openssl/opensslv.h`.
 After this the following can be found:
 ```perl
@@ -958,7 +958,7 @@ There is a config script in the root directory.
 
 ### Build system
 The build system is based on the Configure perl script. Running Configure will
-generate a `Makefile` and also an `opensslconf.h` file. 
+generate a `Makefile` and also an `opensslconf.h` file.
 
 ### build.info
 Information about these files can be found in `Configuration/README`.
@@ -971,9 +971,9 @@ Lets take a look at the buildinfo.h file in `openssl/crypto`. The first line loo
 {- use File::Spec::Functions qw/catdir catfile/; -}
 ```
 So the build.info is not itself a perl script but a template which can have
-perl "embedded" in it. For example, the above will use the 
+perl "embedded" in it. For example, the above will use the
 qw is a function that to specify multiple single quoted words. For I guess
-this is importing 'catdir' and 'catfile' from the File::Spec::Functions module. But I cannot find any usage 
+this is importing 'catdir' and 'catfile' from the File::Spec::Functions module. But I cannot find any usage
 of `catdir` or `catfile` in crypto/build.info. This was fixed in [commit](https://github.com/openssl/openssl/pull/5832).
 
 So, lets look at the next part of crypto/build.info:
@@ -983,8 +983,8 @@ LIBS=../libcrypto
 
 
 ### perlasm
-Assemblers usually have macros and other high-level features that make 
-assembly-language programming convenient. However, some assemblers do not have such features, and the ones that do all have different syntaxes. 
+Assemblers usually have macros and other high-level features that make
+assembly-language programming convenient. However, some assemblers do not have such features, and the ones that do all have different syntaxes.
 OpenSSL has its own assembly language macro framework called `perlasm` to deal with this. Every OpenSSL assembly language source file is actually a Perl program that generates the assembly language file. The result is several large files of interleaved Perl and assembly language code.
 For example, `crypto/aes/asm/aes-x86_64.pl`
 
@@ -999,7 +999,7 @@ $ openssl x509 -in certificate.crt -text -noout
 ```
 
 ### Initialization Vector
-Is a vector/array of random bytes. This is all it is. Someone seeing those bytes cannot 
+Is a vector/array of random bytes. This is all it is. Someone seeing those bytes cannot
 deduce anything about the key or the encrypted message. But they need it for decryption so
 it must be sent along with the cypher text.
 
@@ -1019,7 +1019,7 @@ This is an application:
 ```console
 $ openssl ca --help
 ```
-It can be used to sign certificate requests and generate CRLs and also maintains a text database of issued 
+It can be used to sign certificate requests and generate CRLs and also maintains a text database of issued
 certificates and their status.
 
 Every certificate as a serial number which is a unique positive integer assigned by the CA.
@@ -1034,9 +1034,9 @@ Certificate:
     ...
 ```
 
-Each issued certificate must contain a unique serial number assigned by the CA. It must be unique for each 
-certificate given by a given CA. 
-OpenSSL keeps the used serial numbers on a file, by default it has the same name as the CA certificate file 
+Each issued certificate must contain a unique serial number assigned by the CA. It must be unique for each
+certificate given by a given CA.
+OpenSSL keeps the used serial numbers on a file, by default it has the same name as the CA certificate file
 with the extension replace by srl
 
 ### SSL_METHOD
@@ -1142,8 +1142,8 @@ So if you need to find the type
 int type = EVP_PKEY_base_id(pkey.get())
 DSA* dsa = EVP_PKEY_get0_DSA(pkey.get());
 ```
-The api functions can be found in `crypto/evp/p_lib.c`. 
-Where are the functions for the DSA type? 
+The api functions can be found in `crypto/evp/p_lib.c`.
+Where are the functions for the DSA type?
 These can be found in `/crypto/dsa/dsa_lib.c`
 
 ### Diffie Hellman Key Exchange
@@ -1152,7 +1152,7 @@ Alice                 Public                        Bob
 a (number < n)        g (generator, small prime)    b (number < n)
                       n (big prime number)
 
-g^a mod n ------------> a₁             b₁ <--------- g^b mod n 
+g^a mod n ------------> a₁             b₁ <--------- g^b mod n
 
 (b₁)^a mod n                                         (a₁)^b mod n
 is same as:                                          is the same as:
@@ -1171,7 +1171,7 @@ a = 3                  g = 5                         b = 2
 Notice that `g` for generator is like the starting point on the circle and n is
 the max size of the circle after which is will wrap over.
 Visualize this as a circle (like a clock and 12 is the number n). So we take
-our private key (a) and g to that and mod it to the circle, so this will be 
+our private key (a) and g to that and mod it to the circle, so this will be
 a point some where on the circle. Bob does the same and his value will also be
 somewhere on the circle. The can now share this publicly as just knowing the point
 on the cicle is not enough, only alice knows how many times around the circle (a times)
@@ -1191,7 +1191,7 @@ Alice                 Public                         Bob
 a (number < n)        g (point on the curve)         b (number < n)
 
 a*g    ------------>  a₁             b₁ <---------   b*g
-b¹*g =                                               a²*g= 
+b¹*g =                                               a²*g=
 
 ```
 
@@ -1206,10 +1206,10 @@ y² = x³ -2x + 2
 ```
 And a prime number p which is the number of times we do point addition beginning
 with an initial point. The graph is symetric in the horizontal axis so we can
-take take two points on the graph and draw a line between them. This line will 
+take take two points on the graph and draw a line between them. This line will
 intersect that another point on the graph, from which we now draw a vertical
 line up/down depending on the side of the graph we are on. This point is called
-P+Q. There is a max value for the x-axis where the line will wrap around and 
+P+Q. There is a max value for the x-axis where the line will wrap around and
 start from zero, this is number of bit of the EC.
 
 For ECDH alice and bob must first agree to use the same eliptic curve, and also
@@ -1262,11 +1262,11 @@ Extends the Ecludian alg to also tell us what `s` and `t` are.
 gcd(13, 7) = 1
 
 
-The example elliptic curve domain parameters over 𝔽2m have been given nicknames 
-to enable them to be easily identified. The nicknames were chosen as follows. 
-Each name begins with sec to denote ‘Standards for Efficient Cryptography’, 
-followed by a t to denote parameters over 𝔽2m , followed by a number denoting 
-the field size m, followed by a k to denote parameters associated with a Koblitz 
+The example elliptic curve domain parameters over 𝔽2m have been given nicknames
+to enable them to be easily identified. The nicknames were chosen as follows.
+Each name begins with sec to denote ‘Standards for Efficient Cryptography’,
+followed by a t to denote parameters over 𝔽2m , followed by a number denoting
+the field size m, followed by a k to denote parameters associated with a Koblitz
 curve or an r to denote verifiably random parameters, followed by a sequence number.
 
 So `secp192k1` would mean:
@@ -1278,17 +1278,17 @@ k|r = k is for a Kobiltz curve and r to denote verifiably random parameters.
 #   = a sequence number
 ```
 
-Dual Elliptic Curve Deterministic Random Bit Generator (Dual_EC_DRBG). This is a 
-random number generator standardized by the National Institute of Standards and 
-Technology (NIST) and promoted by the NSA. Dual_EC_DRBG generates random-looking 
-numbers using the mathematics of elliptic curves. The algorithm itself involves 
-taking points on a curve and repeatedly performing an elliptic curve "dot" operation. 
+Dual Elliptic Curve Deterministic Random Bit Generator (Dual_EC_DRBG). This is a
+random number generator standardized by the National Institute of Standards and
+Technology (NIST) and promoted by the NSA. Dual_EC_DRBG generates random-looking
+numbers using the mathematics of elliptic curves. The algorithm itself involves
+taking points on a curve and repeatedly performing an elliptic curve "dot" operation.
 
 
 
-There has been progress in developing curves with efficient arithmetic outside 
-of NIST, including curve 25519 created by Daniel Bernstein (djb) and more 
-recently computed curves by Paulo Baretto and collaborators. But widespread adoption 
+There has been progress in developing curves with efficient arithmetic outside
+of NIST, including curve 25519 created by Daniel Bernstein (djb) and more
+recently computed curves by Paulo Baretto and collaborators. But widespread adoption
 of these curves is several years away.
 
 
@@ -1305,7 +1305,7 @@ logically consists of two modules.
 
 So we first want to extract from a source key (sk), which could be created by a hardware
 random number generator or a key exchange protocol, and then create additional
-keys derived from that. 
+keys derived from that.
 
 For example in TLS 1.3 there are multiple keys need to for different things.
 ```
@@ -1317,7 +1317,7 @@ Key Derivation Function (KDF)
 
 
 In TLS the browser has a key for sending to the server and a key for receiving
-from the server. 
+from the server.
 ```
 +--------+
 |Client  |

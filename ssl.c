@@ -27,8 +27,8 @@ int pass_cb(char *buf, int size, int rwflag, void *u) {
 /**
  * This example is pretty much the same as socket.c, the only thing that
  * changes is setting up and making the connection.
- */ 
-int main(int arc, char *argv[]) { 
+ */
+int main(int arc, char *argv[]) {
   char* get = "GET / HTTP/1.1\x0D\x0AHost: www.google.se\x0D\x0A\x43onnection: Close\x0D\x0A\x0D\x0A";
   char buf[1024];
   BIO* bio;
@@ -114,7 +114,7 @@ int main(int arc, char *argv[]) {
   SSL_CTX_free(ctx);
 
   /* if you omit the next, a small leak may be left when you make use of the
-   * BIO (low level API) for e.g. base64 transformations 
+   * BIO (low level API) for e.g. base64 transformations
    */
   CRYPTO_cleanup_all_ex_data();
 

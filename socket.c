@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 
-int main(int arc, char *argv[]) { 
+int main(int arc, char *argv[]) {
   char* get = "GET / HTTP/1.1\x0D\x0AHost: www.google.se\x0D\x0A\x43onnection: Close\x0D\x0A\x0D\x0A";
   char buf[1024];
   BIO* bio;
@@ -38,7 +38,7 @@ int main(int arc, char *argv[]) {
   BIO_free_all(bio);
 
   /* if you omit the next, a small leak may be left when you make use of the
-   * BIO (low level API) for e.g. base64 transformations 
+   * BIO (low level API) for e.g. base64 transformations
    */
   CRYPTO_cleanup_all_ex_data();
 
