@@ -1,6 +1,10 @@
-OPENSSL_DIR=/Users/danielbevenius/work/security/build_master
+OPENSSL_DIR=$(HOME)/opt/openssl
 OPENSSL_INCLUDE_DIR=$(OPENSSL_DIR)/include
 OPENSSL_LIB_DIR=$(OPENSSL_DIR)/lib
+
+.PHONY: all  # ?
+# all: basic ssl_method hmac digest sign private socket ssl engine random_bytes bio bio_ssl derive distribution generator
+all: basic hmac digest sign private socket ssl engine random_bytes bio bio_ssl distribution generator
 
 basic: basic.c
 	clang -O0 -g -I$(OPENSSL_INCLUDE_DIR) $< -o $@ -L$(OPENSSL_LIB_DIR) -lcrypto

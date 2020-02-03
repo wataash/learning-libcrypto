@@ -50,8 +50,8 @@ int main(int arc, char *argv[]) {
   //X509_STORE* store = X509_STORE_new();
 
   // context, filename, path
-  //if (!SSL_CTX_load_verify_locations(ctx, "TrustStore.pem", NULL)) {
-  if (!X509_STORE_load_locations(ctx->cert_store, "TrustStore.pem", NULL)) {
+  if (!SSL_CTX_load_verify_locations(ctx, "TrustStore.pem", NULL)) {
+  // if (!X509_STORE_load_locations(ctx->cert_store, "TrustStore.pem", NULL)) {
     fprintf(stderr, "failed to load trust store");
     ERR_print_errors_fp(stderr);
     SSL_CTX_free(ctx);

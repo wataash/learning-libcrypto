@@ -19,12 +19,18 @@ int decrypt(unsigned char *ciphertext,
 void handleErrors(void);
 
 int main(int arc, char *argv[]) {
+  // https://www.openssl.org/docs/manmaster/man3/ERR_load_crypto_strings.html
+  // deprecated since 1.1.0
   /* Load the human readable error strings for libcrypto */
   ERR_load_crypto_strings();
 
+  // https://www.openssl.org/docs/manmaster/man3/OpenSSL_add_all_algorithms.html
+  // deprecated since 1.1.0
   /* Load all digest and cipher algorithms */
   OpenSSL_add_all_algorithms();
 
+  // https://www.openssl.org/docs/manmaster/man3/OPENSSL_no_config.html
+  // deprecated since 1.1.0
   /* Load config file, and other important initialisation */
   //OPENSSL_config(NULL);
   OPENSSL_no_config();
@@ -45,12 +51,25 @@ int main(int arc, char *argv[]) {
   printf("Decrypted text is:\n");
   printf("%s\n", decryptedtext);
 
+  // https://www.openssl.org/docs/manmaster/man3/CONF_modules_unload.html
+  // Deprecated since OpenSSL 1.1.0
+  CONF_modules_unload(1);
+
+  // https://www.openssl.org/docs/manmaster/man3/EVP_cleanup.html
+  // deprecated in OpenSSL 1.1.0 by OPENSSL_init_crypto()
+  // https://www.openssl.org/docs/manmaster/man3/OPENSSL_init_crypto.html
   /* Removes all digests and ciphers */
   EVP_cleanup();
 
   /* if you omit the next, a small leak may be left when you make use of the BIO (low level API) for e.g. base64 transformations */
   CRYPTO_cleanup_all_ex_data();
 
+  // https://www.openssl.org/docs/manmaster/man3/ERR_remove_state.html
+  // Deprecated since OpenSSL 1.0.0
+  // ERR_remove_state();
+
+  // https://www.openssl.org/docs/manmaster/man3/ERR_free_strings.html
+  // Deprecated since OpenSSL 1.1.0,
   /* Remove error strings */
   ERR_free_strings();
 
@@ -70,6 +89,11 @@ int encrypt(unsigned char* plaintext,
   if(!(ctx = EVP_CIPHER_CTX_new())) {
     handleErrors();
   }
+
+  int tmp = EVP_EncryptInit_ex(ctx, NULL, NULL, key, iv);
+  (void)tmp;
+  ERR_print_errors_fp(stderr); // 0:error:0607B083:digital envelope routines:EVP_CipherInit_ex:no cipher set:../crypto/evp/evp_enc.c:148:
+  ERR_print_errors_fp(stderr); // (noop)
 
   /* Initialise the encryption operation. IMPORTANT - ensure you use a key
    * and IV size appropriate for your cipher

@@ -58,6 +58,7 @@ int hmac(const char* msg, size_t m_len, char** val, size_t* val_len, EVP_PKEY* p
     handleErrors();
   }
 
+  // const EVP_MD* md = EVP_get_digestbyname("foo");
   const EVP_MD* md = EVP_get_digestbyname("SHA256");
   if (md == NULL) {
     handleErrors();
